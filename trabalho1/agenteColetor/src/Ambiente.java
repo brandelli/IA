@@ -13,15 +13,19 @@ public class Ambiente {
     private int trash;
     private int chargers;
     private int innerWallSize;
+    private int dirty;
     private ArrayList<Integer> hasSpaceLeft;
     private ArrayList<Integer> hasSpaceRight;
     
-    public Ambiente(int size, int trash, int chargers){
+    public Ambiente(int size, int trash, int chargers, int dirty){
         if(size < 9){
            this.size = 9;
            System.out.println("Tamanho da sala muito pequeno, tamanho alterado para 9");
            size = this.size;
         }
+        if(dirty < 45 || dirty > 80)
+            dirty = 50;
+        this.dirty = dirty;
         this.chargers = chargers > 0 ? chargers : 1;
         this.trash = trash > 0 ? trash : 1;
         this.size = size;
@@ -32,19 +36,24 @@ public class Ambiente {
         this.initializeInnerWallAvailableSpaces(hasSpaceLeft);
         this.initializeInnerWallAvailableSpaces(hasSpaceRight);
         this.resetRoom();
+        System.out.println("sala vazia: "+this.showRoomFreeSpaces());
         this.putAgent();
+        System.out.println("com agente: "+this.showRoomFreeSpaces());
         this.buildWalls();
-        this.putFirstChargerAndTrash();
-        for (int i = 0; i < chargers - 1; i++) {
-            if(!putSpecialElement('R'))
-                break;
-            System.out.println("putting charger: "+(i+2));
-        }
+        System.out.println("com paredes: "+this.showRoomFreeSpaces());
+        this.putSpecialElement('R');
+        this.putSpecialElement('L');
         for (int i = 0; i < trash - 1; i++) {
             if(!putSpecialElement('L'))
                 break;
-            System.out.println("putting trash: "+(i+2));
         }
+        for (int i = 0; i < chargers - 1; i++) {
+            if(!putSpecialElement('R'))
+                break;
+        }
+        System.out.println("Com lixeiras e carregadores: "+this.showRoomFreeSpaces());
+        this.putDirty();
+        
     }
 
     public int getSize() {
@@ -109,13 +118,10 @@ public class Ambiente {
         int sideCharger = rand.nextInt(2);
         int xRightSide = rand.nextInt(this.hasSpaceRight.size());
         int xLeftSide = rand.nextInt(this.hasSpaceLeft.size());
-        
         row = this.hasSpaceRight.get(xRightSide);
         this.putElement(row, this.size - 3,sideCharger == 1 ? 'R' : 'L');
         row = this.hasSpaceLeft.get(xLeftSide);
         this.putElement(row, 2, sideCharger == 0 ? 'R' : 'L');
-        this.hasSpaceLeft.remove(xLeftSide);
-        this.hasSpaceRight.remove(xRightSide);
     }
     
     public void putElement(int x, int y, char element){
@@ -145,27 +151,35 @@ public class Ambiente {
     public boolean putSpecialElement(char element){
         Random rand = new Random();
         int side = rand.nextInt(2);
-        int row, rowIndex;
+        int row, rowIndex, columnIndex;
+        //0 parede, 1 limite mapa
+        columnIndex = rand.nextInt(2);
         if(side == 0 && this.hasSpaceLeft.size() > 0){
             rowIndex = rand.nextInt(this.hasSpaceLeft.size());
             row = this.hasSpaceLeft.get(rowIndex);
-            this.hasSpaceLeft.remove(rowIndex);
-            System.out.println("botando elemento na parede esquerda, linha:"+ row);
-            this.room[row][2] = element;
+            columnIndex = ((columnIndex == 0 && this.room[row][2] == ' ') || (columnIndex == 1 && this.room[row][0] != ' ')) ? 2 : 0;
+            this.room[row][columnIndex] = element;
+            if(this.room[row][0] != ' ' && this.room[row][2] != ' ')
+                this.hasSpaceLeft.remove(rowIndex);
+            System.out.println("Element: "+element+" Row: "+row+ " Column: "+columnIndex);
             return true;
         }else if(this.hasSpaceRight.size() > 0){
             rowIndex = rand.nextInt(this.hasSpaceRight.size());
             row = this.hasSpaceRight.get(rowIndex);
-            this.hasSpaceRight.remove(rowIndex);
-            System.out.println("botando elemento na parede direita, linha:" + row);
-            this.room[row][this.size - 3] = element;
+            columnIndex = ((columnIndex == 0 && this.room[row][this.size - 3] == ' ') || (columnIndex == 1 && this.room[row][this.size - 1] != ' ')) ? this.size - 3 : this.size - 1;
+            this.room[row][columnIndex] = element;
+            if(this.room[row][this.size - 1] != ' ' && this.room[row][this.size - 3] != ' ')
+                this.hasSpaceRight.remove(rowIndex);
+            System.out.println("Element: "+element+" Row: "+row+ " Column: "+columnIndex);
             return true; 
         }else if(this.hasSpaceLeft.size() > 0){
             rowIndex = rand.nextInt(this.hasSpaceLeft.size());
             row = this.hasSpaceLeft.get(rowIndex);
-            this.hasSpaceLeft.remove(rowIndex);
-            System.out.println("botando elemento na parede esquerda, linha:"+ row);
-            this.room[row][2] = element;
+            columnIndex = ((columnIndex == 0 && this.room[row][2] == ' ') || (columnIndex == 1 && this.room[row][0] != ' ')) ? 2 : 0;
+            this.room[row][columnIndex] = element;
+            if(this.room[row][0] != ' ' && this.room[row][2] != ' ')
+                this.hasSpaceLeft.remove(rowIndex);
+            System.out.println("Element: "+element+" Row: "+row+ " Column: "+columnIndex);
             return true;
         }
         return false;
@@ -180,6 +194,38 @@ public class Ambiente {
             }
         }
         return nElements;
+    }
+    
+    public int showRoomFreeSpaces(){
+        int spaces = 0;
+        for (int i = 0; i < this.size; i++) {
+            for (int j = 0; j < this.size; j++) {
+                if(this.room[i][j] == ' ')
+                    spaces++;
+            }
+        }
+        return spaces;
+    }
+    
+    public void putDirty(){
+        Random rand = new Random();
+        int freeSpaces = this.showRoomFreeSpaces();
+        float percentage = (float)(this.dirty) / 100;
+        int nDirty = (int)(freeSpaces * percentage);
+        int x,y;
+        System.out.println("Numero de sujeiras: "+nDirty);
+        while (nDirty > 0) {            
+            x = rand.nextInt(this.size);
+            y = rand.nextInt(this.size);
+            System.out.println("x: "+x+ " y: "+y);
+            if(this.room[x][y] == ' '){
+                System.out.println("sujeira colocada");
+                nDirty--;
+                this.room[x][y] = 'S';
+            }else{
+                System.out.println("Lugar ja preenchido");
+            }
+        }
     }
     
     
