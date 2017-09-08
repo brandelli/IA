@@ -16,6 +16,7 @@ public class Ambiente {
     private int dirty;
     private ArrayList<Integer> hasSpaceLeft;
     private ArrayList<Integer> hasSpaceRight;
+    private Agente agente;
     
     public Ambiente(int size, int trash, int chargers, int dirty){
         if(size < 9){
@@ -53,7 +54,10 @@ public class Ambiente {
         }
         System.out.println("Com lixeiras e carregadores: "+this.showRoomFreeSpaces());
         this.putDirty();
-        
+        this.viewRoom();
+        int lixos = this.showNumberOfElements('S');
+        this.agente = new Agente(this.room);
+        System.out.println("numero de sujeiras " + lixos);
     }
 
     public int getSize() {
