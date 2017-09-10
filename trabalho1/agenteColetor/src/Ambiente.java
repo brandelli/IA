@@ -165,7 +165,7 @@ public class Ambiente {
             this.room[row][columnIndex] = element;
             if(this.room[row][0] != ' ' && this.room[row][2] != ' ')
                 this.hasSpaceLeft.remove(rowIndex);
-            System.out.println("Element: "+element+" Row: "+row+ " Column: "+columnIndex);
+//            System.out.println("Element: "+element+" Row: "+row+ " Column: "+columnIndex);
             return true;
         }else if(this.hasSpaceRight.size() > 0){
             rowIndex = rand.nextInt(this.hasSpaceRight.size());
@@ -174,7 +174,7 @@ public class Ambiente {
             this.room[row][columnIndex] = element;
             if(this.room[row][this.size - 1] != ' ' && this.room[row][this.size - 3] != ' ')
                 this.hasSpaceRight.remove(rowIndex);
-            System.out.println("Element: "+element+" Row: "+row+ " Column: "+columnIndex);
+//            System.out.println("Element: "+element+" Row: "+row+ " Column: "+columnIndex);
             return true; 
         }else if(this.hasSpaceLeft.size() > 0){
             rowIndex = rand.nextInt(this.hasSpaceLeft.size());
@@ -183,7 +183,7 @@ public class Ambiente {
             this.room[row][columnIndex] = element;
             if(this.room[row][0] != ' ' && this.room[row][2] != ' ')
                 this.hasSpaceLeft.remove(rowIndex);
-            System.out.println("Element: "+element+" Row: "+row+ " Column: "+columnIndex);
+//            System.out.println("Element: "+element+" Row: "+row+ " Column: "+columnIndex);
             return true;
         }
         return false;
@@ -221,13 +221,13 @@ public class Ambiente {
         while (nDirty > 0) {            
             x = rand.nextInt(this.size);
             y = rand.nextInt(this.size);
-            System.out.println("x: "+x+ " y: "+y);
+//            System.out.println("x: "+x+ " y: "+y);
             if(this.room[x][y] == ' '){
-                System.out.println("sujeira colocada");
+//                System.out.println("sujeira colocada");
                 nDirty--;
                 this.room[x][y] = 'S';
             }else{
-                System.out.println("Lugar ja preenchido");
+//                System.out.println("Lugar ja preenchido");
             }
         }
     }
