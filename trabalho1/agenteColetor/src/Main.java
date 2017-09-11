@@ -8,7 +8,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Ambiente amb = new Ambiente(10,5,5,80);
+        Ambiente amb = new Ambiente(10,5,5,80,5,50);
         amb.viewRoom();
         System.out.println("parede esquerda");
         amb.showPossiblePlacesLeft();
