@@ -6,7 +6,7 @@
 
 /**
  *
- * @author Brandelli
+ * @author Bruno Brandelli, Rodrigo Pacheco
  */
 public enum Estados {
     DESLIGADO, DIREITA, ESQUERDA, CIMA, BAIXO, LIMPANDO, TERMINADO, DESVIANDO, DESVIANDO_ESQUERDA, DESVIANDO_DIREITA, ESVAZIANDO, RECARREGANDO;

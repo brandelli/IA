@@ -1,4 +1,5 @@
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -16,9 +17,8 @@ public class Ambiente {
     private int dirty;
     private ArrayList<Integer> hasSpaceLeft;
     private ArrayList<Integer> hasSpaceRight;
-    private Agente agente;
     
-    public Ambiente(int size, int trash, int chargers, int dirty, int capLixo, int capCarga){
+    public Ambiente(int size, int trash, int chargers, int dirty){
         if(size < 9){
            this.size = 9;
            System.out.println("Tamanho da sala muito pequeno, tamanho alterado para 9");
@@ -56,7 +56,6 @@ public class Ambiente {
         this.putDirty();
         this.viewRoom();
         int lixos = this.showNumberOfElements('S');
-        this.agente = new Agente(this.room, capLixo, capCarga);
         System.out.println("numero de sujeiras " + lixos);
     }
 
@@ -97,6 +96,29 @@ public class Ambiente {
         }
     }
     
+    public void viewRoom(Point ponto){
+        int size = this.getSize();
+        for (int i = 0; i < size; i++) {
+            System.out.print(" -");
+        }
+        System.out.println("");
+        for (int i = 0; i < size; i++) {
+            System.out.print("|");
+            for (int j = 0; j < size; j++) {
+                if(ponto.x == i && ponto.y == j)
+                    System.out.print("A");
+                else
+                    System.out.print(this.room[i][j]);
+                System.out.print("|");
+            }
+            System.out.println("");
+            for (int j = 0; j < size; j++) {
+                System.out.print(" -");
+            }
+            System.out.println("");
+        }
+    }
+    
     public void putAgent(){
         this.room[0][0] = 'A';
     }
@@ -123,13 +145,13 @@ public class Ambiente {
         int xRightSide = rand.nextInt(this.hasSpaceRight.size());
         int xLeftSide = rand.nextInt(this.hasSpaceLeft.size());
         row = this.hasSpaceRight.get(xRightSide);
-        this.putElement(row, this.size - 3,sideCharger == 1 ? 'R' : 'L');
+        this.putElement(new Point(row, this.size - 3),sideCharger == 1 ? 'R' : 'L');
         row = this.hasSpaceLeft.get(xLeftSide);
-        this.putElement(row, 2, sideCharger == 0 ? 'R' : 'L');
+        this.putElement(new Point(row, 2), sideCharger == 0 ? 'R' : 'L');
     }
-    
-    public void putElement(int x, int y, char element){
-        this.room[x][y] = element;
+        
+    public void putElement(Point ponto, char element){
+        this.room[ponto.x][ponto.y] = element;
     }
     
     public void initializeInnerWallAvailableSpaces(ArrayList<Integer> side){
@@ -232,6 +254,19 @@ public class Ambiente {
         }
     }
     
+    public char getElement(Point ponto){
+        return this.room[ponto.x][ponto.y];
+    }
     
-    
+    public ArrayList<Point> getListElements(char element){
+        ArrayList<Point> pointList = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if(this.room[i][j] == element){
+                    pointList.add(new Point(i, j));
+                }
+            }
+        }
+        return pointList;
+    }
 }
