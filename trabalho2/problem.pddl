@@ -1,0 +1,6 @@
+(define (problem ambiente) 
+    (:domain agente) 
+    (:objects Sala1 Sala2 Sala3 Sala4 Corredor1 Deposito1 Escada1 Lampadas1)
+    (:init (Em Sala1) (Sala Sala1) (Sala Sala2) (Sala Sala3) (Sala Sala4) (Corredor Corredor1) (Deposito Deposito1) (Lampada Lampadas1) (Escada Escada1) (Queimada Sala1) (Queimada Sala2) (Queimada Sala3) (Queimada Sala4))
+    (:goal (and (Funcionando Sala1) (Funcionando Sala2) (Funcionando Sala3) (Funcionando Sala4)))
+)
